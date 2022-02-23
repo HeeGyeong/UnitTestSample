@@ -11,6 +11,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**
+ * Espresso 를 사용한 UI Test
+ */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
 
