@@ -5,11 +5,13 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
+import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 
 /**
  * Espresso 를 사용한 UI Test
@@ -19,6 +21,7 @@ class ExampleInstrumentedTest {
 
     @get:Rule
     var activityRule = ActivityTestRule(MainActivity::class.java)
+    private lateinit var mock: MockSample
 
     @Before
     fun before() {
@@ -28,6 +31,29 @@ class ExampleInstrumentedTest {
     @After
     fun after() {
         // fin
+    }
+
+    @Test
+    fun mock_test() {
+        mock = Mockito.mock(MockSample::class.java)
+
+        Mockito.`when`(mock.getNumber()).thenReturn(222)
+        Mockito.`when`(mock.getString()).thenReturn("100")
+
+        // Truth 를 사용하는 부분에서 테스트가 실패하게 되면 실행 된 앱은 종료된다.
+//        assertThat(mock.getNumber()).isEqualTo(22322)
+        assertThat(mock.getNumber()).isEqualTo(222)
+        Mockito.verify(mock, Mockito.times(1)).getNumber()
+        Mockito.verify(mock, Mockito.never()).getString()
+
+        Espresso.onView(withId(R.id.text1))
+            .perform(ViewActions.typeText(mock.getNumber().toString()), ViewActions.closeSoftKeyboard())
+
+        Mockito.`when`(mock.getNumber()).thenReturn(369369)
+        // verify 로 검증이 가능한 횟수는 Mockito 를 제외한 곳에서 사용한 횟수는 count 하지 않는다.
+        Mockito.verify(mock, Mockito.times(2)).getNumber()
+        Espresso.onView(withId(R.id.text1))
+            .perform(ViewActions.clearText(), ViewActions.typeText(mock.getNumber().toString()), ViewActions.closeSoftKeyboard())
     }
 
     @Test
