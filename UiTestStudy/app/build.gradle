@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'jacoco'
 }
 
 android {
@@ -18,6 +19,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -35,6 +40,16 @@ android {
         unitTests.includeAndroidResources = true
         // return 시 exception 대신에 default Value 를 return 하도록 설정.
         unitTests.returnDefaultValues = true
+
+        unitTests.all {
+            jacoco {
+                // Test 타입의 파일을 모두 확인하기 위하여 설정.
+                includeNoLocationClasses = true
+                // java.lang.NoClassDefFoundError: jdk/internal/reflect/GeneratedSerializationConstructorAccessor1
+                // 해당 오류가 발생할 경우 추가.
+                excludes = ['jdk.internal.*']
+            }
+        }
     }
 }
 
@@ -65,4 +80,25 @@ dependencies {
     // androidx 를 사용하는 경우, com.android.support 를 사용하게 되면 충돌이 발생하여 정상 동작을 하지 않는 것으로 보인다.
 //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
 //    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+}
+
+// dependsOn : 유닛 테스트를 수행하는 태스크 이름으로 설정.
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+
+    // reports 생성 확장자
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def mainSrc = "${project.projectDir}/src/main/java"
+    sourceDirectories.setFrom(files([mainSrc])) // 커버리지를 측정할 소스 디렉터리
+
+    // 커버리지에서 제외할 파일
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    classDirectories.setFrom(files([debugTree])) // 컴파일 결과 파일이 있는 디렉터리 지정.
+
+    // 커버리지 측정 결과를 저장할 파일
+    executionData.setFrom(fileTree(dir: "${buildDir}/jacoco/testDebugUnitTest.exec"))
 }
