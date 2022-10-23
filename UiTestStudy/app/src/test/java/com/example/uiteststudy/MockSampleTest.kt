@@ -52,7 +52,10 @@ class MockSampleTest {
 
     private fun answer() {
         Mockito.`when`(mock.getList()).thenAnswer {
+            // it == mock.getList()
             println("print Message")
+            println("it.method ? ${it.method.name}")
+            println("it.mock ? ${it.mock}")
 
             return@thenAnswer listOf("mock")
         }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.uiteststudy.TestSampleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-10-23T02:58:31" hostname="yuhuigyeong-ui-MacBookPro.local" time="0.662">
+  <properties/>
+  <testcase name="basic Mock test" classname="com.example.uiteststudy.TestSampleTest" time="0.659"/>
+  <testcase name="Spy Mock test" classname="com.example.uiteststudy.TestSampleTest" time="0.003"/>
+  <system-out><![CDATA[==== Test Start ====
+==== Fin Basic Mock Test ====
+==== Test Fin ====
+==== Test Start ====
+==== Fin Spy Mock Test ====
+==== Test Fin ====
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
